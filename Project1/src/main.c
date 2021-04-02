@@ -1,49 +1,43 @@
-#include <iostream>
-#include<forward_list>
+#include <stdio.h>
+#include <stdlib.h>
 
-using namespace std;
+typedef enum color{white, gray, black} Color;
 
-enum Color {white, gray, black};
-
-class Node{
-    public:
-        Node(){}
-        void addNode(Node node){
-            link.push_front(node);
-        }
-
-    private:
-        Color color = white;
-        Node* parent = nullptr;
-        int start = -1;
-        int finish = -1;
-        forward_list<Node> link;
-};
-
-/*typedef struct Node{
+//Linked List
+typedef struct node{
     Color color;
-    node* parent;
     int start;
     int finish;
-}node;
-*/
-//build graph
+    struct node* parent;
+    struct node** link;
+}Node;
+
+void addNode(Node* node_p, Node* node_c){
+    int n = sizeof(node_p->link) / sizeof(Node*);
+    node_p->link = (Node**) realloc(node_p->link, sizeof(Node*) * ++n);
+    node_p->link[n-1] = node_c;
+}
 
 
-int main(){
-    int n, c, u, v;
-    int i;
+void main(){
+    int n, l, u, v, i;
+
+    scanf("%d %d", &n, &l);
+    Node graph[n];
     
-    forward_list<Node> graph;
-    cin >> n >> c;
-
-    graph.assign(n, new Node());
-    
+    //graph initialization
     for(i=0; i<n ; i++){
-        scanf("%d %d", &u, &v);
-
-        graph[u-1].addNode(graph[v-1]);
+        graph[i].color = white;
+        graph[i].start = -1;
+        graph[i].finish = -1;
+        graph[i].parent = NULL;
+        graph[i].link = NULL;
     }
 
-    return 0;
+    for(i=0 ; i<l ; i++){
+        scanf("%d %d", &u, &v);
+        addNode(&graph[u], &graph[v]);       
+    }
+    
+    exit(0);
 }
