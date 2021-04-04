@@ -8,9 +8,9 @@ typedef enum color{white, gray, black} Color;
 /*Node*/
 typedef struct node{
     bool is_source;
-    struct node* source;
     int depth;
     int max_depth;
+    struct node* source;
     struct node* parent;
     struct node** link;
     int link_size;
@@ -52,7 +52,7 @@ int visit(Node* node){
     return -1;
 }
 
-int DFS(Node* src){
+int longestPath(Node* src){
     int depth = 1;
     Node* current = src;
 
@@ -77,34 +77,36 @@ int main(){
     int n, l, u, v, i;
     int max_depth = 0;
     int min_src = 0;
-
-    int number = scanf("%d %d", &n, &l);
-    Node graph[n];
+    if(scanf("%d %d", &n, &l) == -1){
+        exit(1);
+    }
+    Node* graph = (Node*) malloc(sizeof(Node) * n);
     
     /*graph initialization*/
 
     for(i=0; i<n ; i++){
         graph[i].is_source = true;
-        graph[i].source = &graph[i];
         graph[i].depth = 1;
         graph[i].max_depth = 1;
+        graph[i].source = &graph[i];
         graph[i].parent = NULL;
         graph[i].link = NULL;
         graph[i].link_size = 0;
     }
 
     for(i=0 ; i<l ; i++){
-        number = scanf("%d %d", &u, &v);
+        if(scanf("%d %d", &u, &v) == -1){
+            exit(1);
+        }
         addNode(&graph[u-1], &graph[v-1]);
         graph[v-1].is_source = false; 
     }
 
-    number++;
     /*k = O(v)*/
     for(i=0; i<n ; i++){
         if(graph[i].is_source){
             min_src++;
-            int max = DFS(&graph[i]);
+            int max = longestPath(&graph[i]);
             if(max > max_depth){
                 max_depth = max;
             }
