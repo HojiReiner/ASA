@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <stdbool.h>
 
 typedef enum color{white, gray, black} Color;
@@ -28,32 +29,17 @@ int visit(Node* node){
     int n = node->link_size;
 
     if(n == 0){
-        node->max_depth = node->depth;
-        if(node->max_depth > node->parent->max_depth){
-            node->parent->max_depth = node->max_depth;
+        if(node->source->max_depth < node->depth){
+            node->source->max_depth = node->depth;
         }
         return -1;
     }
     
     for(i = 0; i<n ; i++){
-        /*Already found a max*/
         if(node->link[i]->source == node->source){
-
-            /*Possible new max*/
-            if(node->depth + 1 > node->link[i]->depth){
-
-                /*Diff between old and new max*/
-                int diff = (node->depth + 1) - node->link[i]->depth;
-                
-                
-                if(node->link[i]->max_depth < node->link[i]->max_depth + diff){
-                    node->link[i]->depth = node->depth + 1;
-                    node->link[i]->max_depth += diff;
-
-                    if(node->max_depth < node->link[i]->max_depth){
-                        node->max_depth = node->link[i]->max_depth;
-                    }
-                }
+            if(node->link[i]->depth < (node->depth + 1)){
+                node->link[i]->depth = node->depth + 1;
+                return i;
             }
         
         }else{
@@ -61,10 +47,6 @@ int visit(Node* node){
             node->link[i]->depth = node->depth + 1;
             return i;
         }
-    }
-
-    if(node->max_depth > node->parent->max_depth){
-        node->parent->max_depth = node->max_depth;
     }
 
     return -1;
@@ -107,7 +89,7 @@ int main(){
         graph[i].depth = 1;
         graph[i].max_depth = 1;
         graph[i].source = &graph[i];
-        graph[i].parent = &graph[i];
+        graph[i].parent = NULL;
         graph[i].link = NULL;
         graph[i].link_size = 0;
     }
