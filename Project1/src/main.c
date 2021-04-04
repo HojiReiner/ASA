@@ -25,13 +25,11 @@ void addNode(Node* node_p, Node* node_c){
 /*BFS*/
 int visit(Node* node){
     int i;
+    int diff;
     int n = node->link_size;
 
     if(n == 0){
         node->max_depth = node->depth;
-        if(node->max_depth > node->parent->max_depth){
-            node->parent->max_depth = node->max_depth;
-        }
         return -1;
     }
     
@@ -39,20 +37,26 @@ int visit(Node* node){
         /*Already found a max*/
         if(node->link[i]->source == node->source){
 
-            /*Possible new max*/
-            if(node->depth + 1 > node->link[i]->depth){
+            /*Visited node lesser depth*/
+            if((node->depth + 1) > node->link[i]->depth){
+                diff = (node->depth + 1) - node->link[i]->depth;
 
-                /*Diff between old and new max*/
-                int diff = (node->depth + 1) - node->link[i]->depth;
-                
-                
-                if(node->link[i]->max_depth < node->link[i]->max_depth + diff){
-                    node->link[i]->depth = node->depth + 1;
-                    node->link[i]->max_depth += diff;
+                if((node->link[i]->max_depth + diff) > node->max_depth ){
+                    node->max_depth = node->link[i]->max_depth + diff;
+                }
+            
+            /*Visited node bigger depth*/
+            }else if((node->depth + 1) < node->link[i]->depth){
+                diff = node->link[i]->depth - (node->depth + 1);
 
-                    if(node->max_depth < node->link[i]->max_depth){
-                        node->max_depth = node->link[i]->max_depth;
-                    }
+                if(node->max_depth < node->link[i]->max_depth - diff){
+                    node->max_depth = node->link[i]->max_depth - diff;
+                }
+                
+            /*Visited node same depth*/
+            }else{
+                if(node->max_depth < node->link[i]->max_depth){
+                    node->max_depth = node->link[i]->max_depth;
                 }
             }
         
@@ -61,10 +65,6 @@ int visit(Node* node){
             node->link[i]->depth = node->depth + 1;
             return i;
         }
-    }
-
-    if(node->max_depth > node->parent->max_depth){
-        node->parent->max_depth = node->max_depth;
     }
 
     return -1;
