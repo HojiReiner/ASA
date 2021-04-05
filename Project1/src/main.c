@@ -49,7 +49,7 @@ int visit(Node* node){
             }else if((node->depth + 1) < node->link[i]->depth){
                 diff = node->link[i]->depth - (node->depth + 1);
 
-                if(node->max_depth < node->link[i]->max_depth - diff){
+                if(node->max_depth < (node->link[i]->max_depth - diff)){
                     node->max_depth = node->link[i]->max_depth - diff;
                 }
                 
@@ -63,6 +63,7 @@ int visit(Node* node){
         }else{
             node->link[i]->source = node->source;
             node->link[i]->depth = node->depth + 1;
+            node->link[i]->max_depth = -1;
             return i;
         }
     }
@@ -105,7 +106,7 @@ int main(){
     for(i=0; i<n ; i++){
         graph[i].is_source = true;
         graph[i].depth = 1;
-        graph[i].max_depth = 1;
+        graph[i].max_depth = -1;
         graph[i].source = &graph[i];
         graph[i].parent = &graph[i];
         graph[i].link = NULL;
