@@ -132,6 +132,11 @@ int main(){
         }
     }
 
+    for(i=0 ; i<n ; i++){
+        free(graph[i].link);
+    }
+    free(graph);
+
     printf("%d %d\n", min_src,max_depth);
     
     exit(0);
