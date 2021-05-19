@@ -12,7 +12,7 @@ struct Edge{
 
 struct Node{
   int ident;
-  int color;
+  Colors color;
   int d;
   Node* parent;
   Node** link;
@@ -31,12 +31,12 @@ int BFS(Graph *graph){
   int minFlow = 2147483647;
   Node* target = &graph->nodes[graph->n - 1];
 
-  graph->nodes[0].color = 0;
+  graph->nodes[0].color = Colors::white;
   graph->nodes[0].parent = nullptr;
   graph->nodes[0].d = 0;
 
   for(i=1; i<graph->n ; i++){
-    graph->nodes[i].color = 0;
+    graph->nodes[i].color = Colors::white;
     graph->nodes[i].parent = nullptr;
   }
 
@@ -51,9 +51,9 @@ int BFS(Graph *graph){
       Node *next = current->link[i];
       int possibleFlow = graph->edges[current->ident][next->ident].cap - graph->edges[current->ident][next->ident].flow;
 
-      if(next->color == 0 && possibleFlow > 0){
+      if(next->color == Colors::white && possibleFlow > 0){
         Queue.push(next);
-        next->color = 1;
+        next->color = Colors::gray;
         next->parent = current;
         next->d = current->d + 1;
         minFlow = min(minFlow, possibleFlow);
@@ -64,7 +64,7 @@ int BFS(Graph *graph){
       }
     }
 
-    current->color = 2;
+    current->color = Colors::black;
   }
   
   return -1;
