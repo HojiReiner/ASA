@@ -13,7 +13,7 @@ struct Edge{
 struct Node{
   int ident;
   Colors color;
-  int d;
+  int minFlow;
   Node* parent;
   Node** link;
   int link_size;
@@ -28,12 +28,11 @@ struct Graph{
 //BFS
 int BFS(Graph *graph){
   int i;
-  int minFlow = 2147483647;
   Node* target = &graph->nodes[graph->n - 1];
 
   graph->nodes[0].color = Colors::white;
   graph->nodes[0].parent = nullptr;
-  graph->nodes[0].d = 0;
+  graph->nodes[0].minFlow = 2147483647;
 
   for(i=1; i<graph->n ; i++){
     graph->nodes[i].color = Colors::white;
@@ -50,17 +49,17 @@ int BFS(Graph *graph){
     for(i=0; i<current->link_size; i++){
       Node *next = current->link[i];
       int possibleFlow = graph->edges[current->ident][next->ident].cap - graph->edges[current->ident][next->ident].flow;
-
-      if(next->color == Colors::white && possibleFlow > 0){
-        Queue.push(next);
-        next->color = Colors::gray;
-        next->parent = current;
-        next->d = current->d + 1;
-        minFlow = min(minFlow, possibleFlow);
-        if(next->ident == target->ident){
-          return minFlow;
+      if(next->color == Colors::white){
+        if(possibleFlow > 0){
+          next->minFlow =  min(current->minFlow, possibleFlow);
+          next->parent = current;
+          if(next->ident == target->ident){
+            return next->minFlow;
+          }     
+          Queue.push(next);
+          next->color = Colors::gray;
+          
         }
-
       }
     }
 
@@ -70,21 +69,6 @@ int BFS(Graph *graph){
   return 0;
 }
 
-
-//Ford Fulkerson
-/*int ComputeLowestCost(Graph *graph){
-  
-
-
-  target = graph.nodes[n-1];
-
-  while(graph.nodes[i] != nullptr){
-    pi = graph.nodes[n-1].parent;
-
-  }
-
-}*/
-// FIXME THIS BISH IS WROOOOOOOONG
 int edmondskarp(Graph *graph){
   int maxFlow = 0;
   while(true) {
@@ -96,16 +80,15 @@ int edmondskarp(Graph *graph){
     maxFlow += flow;
 
     Node currNode = graph->nodes[graph->n-1];
-    Node start = graph->nodes[0];
-    while(currNode.ident != start.ident) {
+
+    while(currNode.parent != nullptr) {
       Node prevNode = graph->nodes[currNode.parent->ident];
       graph->edges[prevNode.ident][currNode.ident].flow += flow;
-      graph->edges[currNode.ident][prevNode.ident].flow -= flow;
+      graph->edges[currNode.ident][prevNode.ident].flow += flow;
 
       currNode = prevNode;
     }
   }
-
   return maxFlow;
 }
 
@@ -172,9 +155,9 @@ int main(){
     graph.nodes[y].link = (Node**) realloc( graph.nodes[y].link, sizeof(Node*) * ++graph.nodes[y].link_size);
     graph.nodes[y].link[ graph.nodes[y].link_size-1] = &graph.nodes[x];
   }
-
-  //printf("%d",ComputeLowestCost(&graph));
-  printf("%d\n", edmondskarp(&graph));
   
+  
+
+  printf("%d\n", edmondskarp(&graph));
   return 0;
 }
