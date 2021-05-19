@@ -67,7 +67,7 @@ int BFS(Graph *graph){
     current->color = Colors::black;
   }
   
-  return -1;
+  return 0;
 }
 
 
@@ -82,7 +82,32 @@ int BFS(Graph *graph){
     pi = graph.nodes[n-1].parent;
 
   }
+
 }*/
+// FIXME THIS BISH IS WROOOOOOOONG
+int edmondskarp(Graph *graph){
+  int maxFlow = 0;
+  while(true) {
+    int flow = BFS(graph);
+    if (flow == 0) {
+      break;
+    }
+
+    maxFlow += flow;
+
+    Node currNode = graph->nodes[graph->n-1];
+    Node start = graph->nodes[0];
+    while(currNode.ident != start.ident) {
+      Node prevNode = graph->nodes[currNode.parent->ident];
+      graph->edges[prevNode.ident][currNode.ident].flow += flow;
+      graph->edges[currNode.ident][prevNode.ident].flow -= flow;
+
+      currNode = prevNode;
+    }
+  }
+
+  return maxFlow;
+}
 
 int main(){
   int n,k;
@@ -149,10 +174,7 @@ int main(){
   }
 
   //printf("%d",ComputeLowestCost(&graph));
-  printf("%d\n", BFS(&graph));
- 
- 
-  
+  printf("%d\n", edmondskarp(&graph));
   
   return 0;
 }
