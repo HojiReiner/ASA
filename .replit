@@ -1,0 +1,2 @@
+language = "cpp"
+run = "g++ -std=c++11 -O3 -Wall -o ~/ASA/Project2/main ~/ASA/Project2/main.cpp -lm; ./Project2/main"
