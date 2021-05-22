@@ -58,7 +58,6 @@ int BFS(Graph *graph){
           }     
           Queue.push(next);
           next->color = Colors::gray;
-          
         }
       }
     }
@@ -82,7 +81,8 @@ int edmondskarp(Graph *graph){
     Node currNode = graph->nodes[graph->n-1];
 
     while(currNode.parent != nullptr) {
-      Node prevNode = graph->nodes[currNode.parent->ident];
+      Node prevNode = *currNode.parent;
+
       graph->edges[prevNode.ident][currNode.ident].flow += flow;
       graph->edges[currNode.ident][prevNode.ident].flow += flow;
 
